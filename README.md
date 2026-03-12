@@ -95,6 +95,6 @@ Open an issue or submit a pull request.
 
 ## Author
 
-**Matteo Ferrini** — Beverage Industry | Six Sigma Black Belt
+**Matteo Ferrini** — Beverage Industry 
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Matteo%20Ferrini-blue?logo=linkedin)](https://www.linkedin.com/in/matteo-ferrini-beverage/?originalSubdomain=nl)
