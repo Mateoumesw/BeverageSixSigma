@@ -19,15 +19,16 @@ Covers **9 statistical topic areas**, each illustrated with real beverage indust
 ## Project Structure
 
 ```
-├── index.html          # Markup — all 9 tab sections
-├── Six sigma_Beverage_stats_toolkit.xlsx    # Offline Excel calculation toolkit
 ├── css/
 │   └── style.css       # All styles and design tokens
 ├── js/
 │   └── main.js         # Navigation, modal, accordion, 17 Chart.js charts
-├── README.md
 ├── CHANGELOG.md
-└── .gitignore
+├── LICENSE
+├── README.md
+├── Six sigma_Beverage_stats_toolkit.xlsx    # Offline Excel calculation toolkit
+├── index.html          # Markup — all 9 tab sections
+
 ```
 
 ---
