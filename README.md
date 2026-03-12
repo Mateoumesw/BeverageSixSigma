@@ -1,6 +1,6 @@
 # Six Sigma Black Belt — Statistical Reference for Beverage Industry
 
-An interactive web app for Six Sigma Black Belt practitioners working in **production**, **QC labs**, and **auditing** in the beverage industry.
+An interactive web app for Six Sigma practitioners working in production, labs, and auditing in the beverage industry.
 
 ![HTML](https://img.shields.io/badge/HTML5-semantic-orange)
 ![CSS](https://img.shields.io/badge/CSS3-custom%20properties-blue)
