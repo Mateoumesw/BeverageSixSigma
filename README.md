@@ -10,13 +10,13 @@ An interactive web app for Six Sigma Black Belt practitioners working in **produ
 
 ---
 
-## 📋 Overview
+## Overview
 
 Covers **9 statistical topic areas**, each illustrated with real beverage industry examples (filling lines, QC labs, sensory panels, supplier audits). No installation, no server, no build step — just open `index.html` in a browser.
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 ├── index.html          # Markup — all 9 tab sections
@@ -31,7 +31,7 @@ Covers **9 statistical topic areas**, each illustrated with real beverage indust
 
 ---
 
-## 🧭 Sections
+## Sections
 
 | # | Tab | Key tools covered |
 |---|-----|-------------------|
@@ -47,7 +47,7 @@ Covers **9 statistical topic areas**, each illustrated with real beverage indust
 
 ---
 
-## 🚀 Usage
+## Usage
 
 **Local:**
 1. Clone or download the repository
@@ -62,7 +62,7 @@ Covers **9 statistical topic areas**, each illustrated with real beverage indust
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Technology | Purpose |
 |------------|---------|
@@ -76,14 +76,14 @@ No npm, no bundler, no framework. Works offline after the first load.
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Suggestions, corrections, and new beverage industry examples are welcome.  
 Open an issue or submit a pull request.
 
 ---
 
-## 👤 Author
+## Author
 
 **Matteo Ferrini** — Beverage Industry | Six Sigma Black Belt
 
