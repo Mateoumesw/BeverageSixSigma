@@ -49,12 +49,12 @@ Covers **9 statistical topic areas**, each illustrated with real beverage indust
 ---
 
 ## |Excel Statistical Toolkit|
-```
+
 File Six sigma_Beverage_stats_toolkit.xlsx
 Automated Calculators: Blue cells for input, results auto-calculate.
 Visual Feedback: Cpk colour-coding and decision logic for Hypothesis tests (e.g., Reject/Fail to reject H₀).
 Reference Constants: Integrated tables for Control Chart constants ($A_2$, $D_4$, $d_2$) and AQL sample sizes.
-```
+
 ---
 
 ## Usage
