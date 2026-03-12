@@ -20,6 +20,7 @@ Covers **9 statistical topic areas**, each illustrated with real beverage indust
 
 ```
 ├── index.html          # Markup — all 9 tab sections
+├── Six sigma_Beverage_stats_toolkit.xlsx    # Offline Excel calculation toolkit
 ├── css/
 │   └── style.css       # All styles and design tokens
 ├── js/
@@ -45,6 +46,14 @@ Covers **9 statistical topic areas**, each illustrated with real beverage indust
 | 8 | Sampling & Auditing | AQL / ISO 2859-1, OC curve, sample size formulas |
 | 9 | Non-Parametric | Mann-Whitney U, Kruskal-Wallis, Friedman, transformations |
 
+---
+
+|Excel Statistical Toolkit|
+
+The included file Six sigma_Beverage_stats_toolkit.xlsx is designed for users who prefer working within Excel or need to perform calculations offline. It features:
+Automated Calculators: Blue cells for input, results auto-calculate.
+Visual Feedback: Cpk colour-coding and decision logic for Hypothesis tests (e.g., Reject/Fail to reject H₀).
+Reference Constants: Integrated tables for Control Chart constants ($A_2$, $D_4$, $d_2$) and AQL sample sizes.
 ---
 
 ## Usage
