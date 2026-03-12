@@ -12,7 +12,7 @@ An interactive web app for Six Sigma Black Belt practitioners working in **produ
 
 ## Overview
 
-Covers **9 statistical topic areas**, each illustrated with real beverage industry examples (filling lines, QC labs, sensory panels, supplier audits). No installation, no server, no build step — just open `index.html` in a browser.
+Covers **9 statistical topic areas**, each illustrated with real beverage industry examples (filling lines, QC labs, sensory panels, supplier audits).
 
 ---
 
@@ -48,7 +48,8 @@ Covers **9 statistical topic areas**, each illustrated with real beverage indust
 
 ---
 
-|Excel Statistical Toolkit|
+## |Excel Statistical Toolkit|
+```
 File Six sigma_Beverage_stats_toolkit.xlsx
 Automated Calculators: Blue cells for input, results auto-calculate.
 Visual Feedback: Cpk colour-coding and decision logic for Hypothesis tests (e.g., Reject/Fail to reject H₀).
@@ -80,7 +81,6 @@ Reference Constants: Integrated tables for Control Chart constants ($A_2$, $D_4$
 | [Chart.js 4.4.1](https://www.chartjs.org/) | 17 interactive charts (CDN) |
 | [IBM Plex](https://fonts.google.com/specimen/IBM+Plex+Sans) | Typography (Google Fonts CDN) |
 
-No npm, no bundler, no framework. Works offline after the first load.
 
 ---
 
