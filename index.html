@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Six Sigma — Statistical Reference for Beverage Industry</title>
+<!-- Chart.js 4.4.1 — all 17 interactive charts, loaded from CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+<!-- IBM Plex font family (Google Fonts):
+     · IBM Plex Sans           — body text, UI elements
+     · IBM Plex Sans Condensed — headings and tab labels (space-efficient)
+     · IBM Plex Mono           — formula boxes, numeric values, badges -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&family=IBM+Plex+Sans+Condensed:wght@700;800&display=swap" rel="stylesheet">
+
+<!-- App stylesheet -->
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     STICKY HEADER
+     Structure: [logo] [tab nav] [About button]
+     Stays visible at the top of the page while scrolling.
+     ══════════════════════════════════════════════════════════════════ -->
+<header>
+<div class="hdr-top">
+  <div class="hdr-logo">
+    <div>
+      <div class="hdr-title">Six Sigma <span>Statistics</span> — Beverage Industry</div>
+      <div class="hdr-sub">Black Belt Practical Reference · Production · QC Lab · Auditing</div>
+    </div>
+  </div>
+  <!-- Tab navigation: each button has data-t="name" matching the id "tp-name"
+     of the corresponding HTML section below.
+     JS handles panel switching by adding/removing the .act class. -->
+<nav class="hdr-nav" id="nav">
+    <button class="tn act" data-t="qref">Quick Ref</button>
+    <button class="tn" data-t="capability">Capability</button>
+    <button class="tn" data-t="charts">Control Charts</button>
+    <button class="tn" data-t="msa">MSA / GRR</button>
+    <button class="tn" data-t="hyptest">Hypothesis Tests</button>
+    <button class="tn" data-t="regression">Regression</button>
+    <button class="tn" data-t="doe">DOE</button>
+    <button class="tn" data-t="sampling">Sampling</button>
+    <button class="tn" data-t="nonparam">Non-Parametric</button>
+  </nav>
+  <button class="about-btn" id="aboutBtn">About</button>
+</div>
+</header>
+
+<main>
+
+<!-- TAB 1 — QUICK REFERENCE ─────────────────────────────────────────
+     At-a-glance overview of all statistical tools.
+     Contains:
+       · Sigma/DPMO/Cpk table + logarithmic chart (Chart.js bar)
+       · Tool selection guide for 12 beverage industry scenarios
+       · Normality guide + distribution type table
+     ──────────────────────────────────────────────────────────────── -->
+<section class="tp act" id="tp-qref">
+  <div class="stitle">Quick <span class="hl">Reference</span></div>
+  <div class="ssub">All statistical tools at a glance — click any card to jump to full explanation. Every tool is illustrated with a real beverage industry example.</div>
+
+  <!-- SIGMA TABLE -->
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">⚡</span> Sigma Level, Cpk, and DPMO Reference</div>
+    <div class="g2">
+      <div>
+        <table class="tbl">
+          <tr><th>Sigma Level</th><th>Cpk</th><th>DPMO</th><th>Yield %</th><th>Status</th></tr>
+          <tr><td>1σ</td><td>0.33</td><td>691,462</td><td>30.9%</td><td class="cell-r">Very poor</td></tr>
+          <tr><td>2σ</td><td>0.67</td><td>308,538</td><td>69.1%</td><td class="cell-r">Poor</td></tr>
+          <tr><td>3σ</td><td>1.00</td><td>66,807</td><td>93.3%</td><td class="cell-a">Below target</td></tr>
+          <tr><td>4σ</td><td>1.33</td><td>6,210</td><td>99.4%</td><td class="cell-g">Capable</td></tr>
+          <tr><td>5σ</td><td>1.67</td><td>233</td><td>99.977%</td><td class="cell-g">Excellent</td></tr>
+          <tr><td>6σ</td><td>2.00</td><td>3.4</td><td>99.9997%</td><td class="cell-b">World class</td></tr>
+        </table>
+        <div class="co co-acc" style="margin-top:10px;"><span class="co-ico">💡</span><div><strong>Beverage benchmark:</strong> Most filling and blending CTQs target Cpk ≥1.33 (4σ). Critical CTQs like food-safety parameters (pH, preservative levels) require Cpk ≥1.67 (5σ). World-class fill volume targets aim for Cpk ≥1.50.</div></div>
+      </div>
+      <div class="ch-wrap">
+        <div class="ch-title">DPMO vs Sigma Level</div>
+        <canvas id="ch-sigma" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOL SELECTION TABLE -->
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">🧭</span> Statistical Tool Selection Guide</div>
+    <table class="tbl">
+      <tr><th>Question you're asking</th><th>Beverage scenario</th><th>Tool to use</th><th>Section</th></tr>
+      <tr><td>Is my process meeting spec limits?</td><td>Is fill volume within ±2% of nominal?</td><td><span class="bdg bdg-acc">Cp / Cpk</span></td><td>Capability</td></tr>
+      <tr><td>Is my process stable over time?</td><td>Is Brix drifting on the blending tank?</td><td><span class="bdg bdg-acc">X-bar R / IMR Chart</span></td><td>Control Charts</td></tr>
+      <tr><td>Can my measurement system be trusted?</td><td>Is the refractometer reading Brix accurately?</td><td><span class="bdg bdg-bl">Gauge R&R (MSA)</span></td><td>MSA / GRR</td></tr>
+      <tr><td>Did my improvement actually work?</td><td>Did the new pump setting reduce fill variation?</td><td><span class="bdg bdg-bl">2-sample t-test</span></td><td>Hypothesis Tests</td></tr>
+      <tr><td>Are 3 or more groups different?</td><td>Do 3 production shifts have the same defect rate?</td><td><span class="bdg bdg-bl">One-way ANOVA</span></td><td>Hypothesis Tests</td></tr>
+      <tr><td>What factors drive my output?</td><td>What drives dissolved oxygen in canned beer?</td><td><span class="bdg bdg-pu">Regression</span></td><td>Regression</td></tr>
+      <tr><td>How do multiple factors interact?</td><td>How do CO₂ pressure + temp + speed interact on carbonation?</td><td><span class="bdg bdg-gn">DOE — Factorial</span></td><td>DOE</td></tr>
+      <tr><td>How much to sample? Am I auditing correctly?</td><td>How many cans to check per pallet for seal integrity?</td><td><span class="bdg bdg-acc">Sampling Plans (AQL)</span></td><td>Sampling</td></tr>
+      <tr><td>My data is not normal — what test?</td><td>Sensory scores (1–10 panel) — comparing 2 recipes</td><td><span class="bdg bdg-pu">Mann-Whitney U</span></td><td>Non-Parametric</td></tr>
+      <tr><td>Is my proportion defective changing?</td><td>Did label application defect rate decrease this month?</td><td><span class="bdg bdg-acc">P-chart / 2-Prop z-test</span></td><td>Control Charts / Hyp.</td></tr>
+      <tr><td>Are two variables correlated?</td><td>Does syrup temperature correlate with Brix variation?</td><td><span class="bdg bdg-pu">Pearson / Spearman r</span></td><td>Regression</td></tr>
+      <tr><td>Are categories distributed as expected?</td><td>Are defect types proportional across 3 filling lines?</td><td><span class="bdg bdg-bl">Chi-square test</span></td><td>Hypothesis Tests</td></tr>
+    </table>
+  </div>
+
+  <!-- NORMALITY CHECK -->
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">📐</span> Always Check Normality First</div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-title" style="color:var(--acc);">Why Normality Matters</div>
+        <p>Most parametric statistical tests (t-tests, ANOVA, regression) assume the data follows a normal distribution. If violated, results can be misleading. In beverage manufacturing, most continuous measurements (fill volume, Brix, pH, turbidity, dissolved oxygen) are approximately normal when the process is in control. Sensory scores, counts, and proportions are often NOT normal.</p>
+        <div class="fbox" style="margin-top:12px;">
+Anderson-Darling test: p &gt; 0.05 → data is normal (fail to reject H₀)
+Shapiro-Wilk test:    p &gt; 0.05 → data is normal
+Rule of thumb: skewness in (-1, +1) and kurtosis in (-2, +2) → approximately normal
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--acc);">Beverage Data — Typical Distribution Types</div>
+        <table class="tbl ref-small">
+          <tr><th>Parameter</th><th>Typical Distribution</th><th>Test to use</th></tr>
+          <tr><td>Fill volume (mL)</td><td>Normal</td><td>t-test, ANOVA</td></tr>
+          <tr><td>Brix / sugar content</td><td>Normal</td><td>t-test, ANOVA</td></tr>
+          <tr><td>pH</td><td>Normal or slightly skewed</td><td>t-test or Mann-Whitney</td></tr>
+          <tr><td>Carbonation (vol CO₂)</td><td>Normal</td><td>t-test, ANOVA</td></tr>
+          <tr><td>Defect counts (per batch)</td><td>Poisson</td><td>c-chart, Chi-square</td></tr>
+          <tr><td>% defective (pass/fail)</td><td>Binomial</td><td>p-chart, 2-prop z</td></tr>
+          <tr><td>Sensory scores (1–10)</td><td>Non-normal</td><td>Mann-Whitney, Kruskal-Wallis</td></tr>
+          <tr><td>Shelf life (days)</td><td>Weibull / Log-normal</td><td>Survival analysis</td></tr>
+          <tr><td>Microbial counts (log)</td><td>Normal (after log transform)</td><td>t-test on log values</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 2 — PROCESS CAPABILITY ──────────────────────────────────────
+     Cp, Cpk, Pp, Ppk — process capability indices.
+     Contains:
+       · Formulas + Cpk distribution chart
+       · Step-by-step example: CSD filler 500 mL
+       · Beverage parameter table with typical Cpk targets
+       · Cpk colour bar (NOT CAPABLE / MARGINAL / CAPABLE / 6σ)
+     ──────────────────────────────────────────────────────────────── -->
+<section class="tp" id="tp-capability">
+  <div class="stitle">Process <span class="hl">Capability</span></div>
+  <div class="ssub">Cp, Cpk, Pp, Ppk — measuring how well a process fits within specification limits. The most important indices for a Six Sigma practitioner.</div>
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">📐</span> The Four Core Indices — Formulas & Meaning</div>
+    <div class="g2">
+      <div>
+        <div class="fbox">
+<span class="hl">Cp</span>  = (USL − LSL) / (6σ̂)          <span class="cm">← potential capability (spread only)</span>
+<span class="hl">Cpk</span> = min[ (USL−μ) / 3σ̂, (μ−LSL) / 3σ̂ ]  <span class="cm">← actual capability (centring + spread)</span>
+
+<span class="bl">Pp</span>  = (USL − LSL) / (6s)           <span class="cm">← overall performance (long-term)</span>
+<span class="bl">Ppk</span> = min[ (USL−μ) / 3s, (μ−LSL) / 3s ]   <span class="cm">← overall performance (centring + long-term)</span>
+
+<span class="cm">σ̂  = R̄/d₂  or  S̄/c₄   (within-subgroup, short-term estimate)
+s   = sample standard deviation of all data (long-term)</span>
+        </div>
+        <div class="co co-info"><span class="co-ico">🔑</span><div><strong>Key rule:</strong> Always look at Cpk, not Cp. Cp tells you if the spread <em>could</em> fit — Cpk tells you if it actually does fit given where the mean sits. A high Cp with low Cpk means the process is too far off-centre.</div></div>
+        <div class="co co-acc"><span class="co-ico">📊</span><div><strong>Cp vs Cpk:</strong> If Cp = Cpk → process is perfectly centred. If Cpk &lt; Cp → process is off-centre. The bigger the gap, the more the mean needs to shift.</div></div>
+        <div class="co co-warn" style="background:rgba(217,79,79,0.07);border-left-color:var(--red);"><span class="co-ico">⚠️</span><div><strong>Cp/Cpk vs Pp/Ppk:</strong> Use Cp/Cpk to evaluate the process in the short term (are the machines capable when stable?). Use Pp/Ppk to evaluate all sources of variation including shift-to-shift, batch-to-batch, operator — the real-world performance.</div></div>
+      </div>
+      <div>
+        <div class="ch-wrap">
+          <div class="ch-title">What Cpk looks like — distribution inside tolerance</div>
+          <canvas id="ch-cpk" height="240"></canvas>
+          <div class="legend" style="margin-top:10px;">
+            <div class="leg-item"><div class="leg-line" style="background:var(--red2);"></div> Cpk 0.70 (not capable)</div>
+            <div class="leg-item"><div class="leg-line" style="background:var(--acc2);"></div> Cpk 1.00 (marginal)</div>
+            <div class="leg-item"><div class="leg-line" style="background:var(--green2);"></div> Cpk 1.33 (capable)</div>
+            <div class="leg-item"><div class="leg-line" style="background:var(--blue2);"></div> Cpk 1.67 (Six Sigma)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">🍶</span> Step-by-Step: Calculating Cpk on a Beverage Line</div>
+    <div class="co co-acc"><span class="co-ico">🏭</span><div><strong>Scenario:</strong> You are a Black Belt at a carbonated soft drink plant. The specification for fill volume is 500 mL ±4 mL (LSL = 496 mL, USL = 504 mL). You collect 25 subgroups of n=5 samples each from the filler during one 8-hour shift.</div></div>
+    <ol class="steps">
+      <li><strong>Collect data:</strong> Record 25 subgroups × 5 samples. Your data file has columns: Subgroup ID, Obs 1–5.</li>
+      <li><strong>Verify stability:</strong> Plot an X-bar R chart first. If there are out-of-control points, investigate and remove special causes before calculating Cpk. Capability is only meaningful for a stable process.</li>
+      <li><strong>Calculate the grand mean (μ̂):</strong> Average of all 125 observations. Result: X̄̄ = 500.6 mL.</li>
+      <li><strong>Estimate within-subgroup σ̂:</strong> Calculate R for each subgroup → average R̄. Then σ̂ = R̄ / d₂. For n=5, d₂ = 2.326. If R̄ = 1.85, then σ̂ = 1.85 / 2.326 = 0.795 mL.</li>
+      <li><strong>Calculate Cp:</strong> Cp = (504 − 496) / (6 × 0.795) = 8 / 4.77 = 1.68.</li>
+      <li><strong>Calculate Cpk:</strong> CPU = (504 − 500.6) / (3 × 0.795) = 3.4 / 2.385 = 1.43. CPL = (500.6 − 496) / 2.385 = 1.93. Cpk = min(1.43, 1.93) = <strong>1.43</strong>.</li>
+      <li><strong>Interpret:</strong> Cp = 1.68 means the spread could fit well. Cpk = 1.43 means you are capable (≥1.33) but slightly biased toward the upper limit (mean is 0.6 mL above target). Action: re-centre fill head to reduce mean to 500.0 mL.</li>
+    </ol>
+    <div class="g2" style="margin-top:16px;">
+      <div class="ch-wrap">
+        <div class="ch-title">Fill Volume — Current State Distribution (CSD Filler example)</div>
+        <canvas id="ch-fillvol" height="220"></canvas>
+      </div>
+      <div>
+        <table class="tbl">
+          <tr><th>Parameter</th><th>Value</th><th>Interpretation</th></tr>
+          <tr><td>LSL</td><td>496 mL</td><td>Lower spec limit</td></tr>
+          <tr><td>USL</td><td>504 mL</td><td>Upper spec limit</td></tr>
+          <tr><td>Mean (X̄̄)</td><td>500.6 mL</td><td>0.6 mL above target</td></tr>
+          <tr><td>σ̂</td><td>0.795 mL</td><td>Within-subgroup σ</td></tr>
+          <tr><td>Cp</td><td class="cell-b">1.68</td><td>Excellent potential</td></tr>
+          <tr><td>Cpk</td><td class="cell-g">1.43</td><td>Capable — but off-centre</td></tr>
+          <tr><td>Sigma level</td><td class="cell-g">~4.3σ</td><td>Good</td></tr>
+          <tr><td>DPMO</td><td class="cell-g">~3,200</td><td>Estimate</td></tr>
+          <tr><td>Action</td><td colspan="2">Re-centre filler to target = 500 mL</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">🏭</span> Beverage Industry Examples by Parameter</div>
+    <table class="tbl">
+      <tr><th>Parameter</th><th>Typical Spec</th><th>LSL</th><th>USL</th><th>Typical Cpk Challenge</th><th>Common Root Cause</th></tr>
+      <tr><td>Fill volume (mL) — CSD</td><td>500 mL ±4 mL</td><td>496</td><td>504</td><td>Off-centring (mean drift)</td><td>Filler nozzle wear, pressure variation</td></tr>
+      <tr><td>Brix (°Bx) — juice</td><td>11.5 ±0.3 °Bx</td><td>11.2</td><td>11.8</td><td>High variation σ</td><td>Syrup pump pulsation, temperature effects</td></tr>
+      <tr><td>Carbonation (vol CO₂) — beer</td><td>2.6 ±0.2 vol</td><td>2.4</td><td>2.8</td><td>Temperature sensitivity</td><td>Cold storage temperature variation</td></tr>
+      <tr><td>pH — low-acid beverage</td><td>3.5 ±0.2</td><td>3.3</td><td>3.7</td><td>Batch-to-batch variation</td><td>Acid dosing pump accuracy</td></tr>
+      <tr><td>Alcohol (% ABV) — beer</td><td>5.0% ±0.2%</td><td>4.8%</td><td>5.2%</td><td>Fermentation control</td><td>Yeast pitch rate, wort gravity</td></tr>
+      <tr><td>Headspace (mm) — glass bottle</td><td>20 ±3 mm</td><td>17</td><td>23</td><td>Variation in crown application</td><td>Seaming head height, bottle height variation</td></tr>
+      <tr><td>Turbidity (NTU) — beer</td><td>&lt;0.5 NTU</td><td>—</td><td>0.5</td><td>One-sided spec (Cpu only)</td><td>Filtration efficiency, diatomite dosing</td></tr>
+      <tr><td>Sodium (mg/L) — sports drink</td><td>500 ±50 mg/L</td><td>450</td><td>550</td><td>Off-centring</td><td>Mineral blend consistency</td></tr>
+    </table>
+    <div class="co co-warn" style="margin-top:14px;"><span class="co-ico">⚠️</span><div><strong>One-sided specs (e.g., turbidity &lt;0.5 NTU):</strong> Use Cpu = (USL − μ) / 3σ only. There is no lower spec. Similarly, for minimum alcohol content regulations, use Cpl only. Do not calculate Cp or Cpk in the traditional bilateral sense.</div></div>
+  </div>
+
+  <hr class="div">
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">🔬</span> QC Lab Application — Cpk on Analytical Methods</div>
+    <div class="g2">
+      <div>
+        <div class="co co-info"><span class="co-ico">🧪</span><div><strong>Lab context:</strong> In a QC lab, you can use Cpk to assess whether your analytical method has sufficient precision to distinguish conforming from non-conforming product. This is related to — but separate from — MSA.</div></div>
+        <p style="font-size:13px;color:var(--txt2);margin-top:12px;line-height:1.7;">For a lab, calculate Cpk using your control sample results over 30+ days against your internal lab specification limits (not the product spec). This tells you: is my instrument's day-to-day repeatability good enough to make reliable product decisions?</p>
+        <div class="ex">
+          <strong>🧪 Lab Example — Brix HPLC method:</strong><br>
+          Internal lab control target: 11.50 °Bx. Control limits: 11.40–11.60 °Bx.<br>
+          30 daily QC check results: mean = 11.51, σ = 0.023 °Bx.<br>
+          Cpk = min[(11.60−11.51)/(3×0.023), (11.51−11.40)/(3×0.023)]<br>
+          = min[1.30, 1.59] = <strong>Cpk = 1.30</strong> (marginal — investigate instrument calibration drift).
+        </div>
+      </div>
+      <div>
+        <div class="card" style="border-top:2px solid var(--acc);">
+          <div class="card-title" style="color:var(--acc);">Cpk Colour-Code at a Glance</div>
+          <div class="prog-row" style="margin-top:8px;">
+            <span class="prog-lbl">Cpk &lt; 1.00</span>
+            <div class="prog-bar"><div class="prog-fill" style="width:40%;background:var(--red2);"></div></div>
+            <span class="prog-val" style="color:var(--red2);">NOT CAPABLE</span>
+          </div>
+          <div class="prog-row">
+            <span class="prog-lbl">Cpk 1.00–1.33</span>
+            <div class="prog-bar"><div class="prog-fill" style="width:66%;background:var(--acc2);"></div></div>
+            <span class="prog-val" style="color:var(--acc2);">MARGINAL</span>
+          </div>
+          <div class="prog-row">
+            <span class="prog-lbl">Cpk 1.33–1.67</span>
+            <div class="prog-bar"><div class="prog-fill" style="width:83%;background:var(--green2);"></div></div>
+            <span class="prog-val" style="color:var(--green2);">CAPABLE</span>
+          </div>
+          <div class="prog-row">
+            <span class="prog-lbl">Cpk ≥ 1.67</span>
+            <div class="prog-bar"><div class="prog-fill" style="width:100%;background:var(--blue2);"></div></div>
+            <span class="prog-val" style="color:var(--blue2);">SIX SIGMA</span>
+          </div>
+          <div class="co co-acc" style="margin-top:14px;"><span class="co-ico">🎯</span><div><strong>Target for new processes:</strong> Aim for Cpk ≥1.67 at process design stage (DFSS) to leave room for long-term degradation. An ongoing process should maintain Cpk ≥1.33 at minimum.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 3 — CONTROL CHARTS ──────────────────────────────────────────
+     SPC — real-time special cause variation detection.
+     Contains:
+       · Decision tree (pure CSS, no SVG)
+       · I-MR chart with juice Brix example (simulated)
+       · X-bar R chart with beer filling line example
+       · P-chart with label quality audit example
+       · Western Electric 8 rules table with beverage examples
+     ──────────────────────────────────────────────────────────────── -->
+<section class="tp" id="tp-charts">
+  <div class="stitle">Control <span class="hl">Charts</span></div>
+  <div class="ssub">SPC (Statistical Process Control) — detecting special cause variation in real time. The cornerstone of the Control phase and ongoing production monitoring.</div>
+
+  <!-- CHART SELECTION GUIDE -->
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">🗺️</span> Which Control Chart to Use — Decision Guide</div>
+    <div class="dt-wrap">
+      <div style="font-size:13.5px;font-weight:700;color:var(--txt);margin-bottom:14px;">START: What type of data are you measuring?</div>
+      <div class="dt-node">
+        <div class="dt-q">📏 VARIABLE (continuous) data — e.g., fill volume, Brix, pH, temperature</div>
+        <div class="dt-sub">
+          <div class="dt-ans"><span class="lbl">n = 1:</span><span class="dt-res">I-MR Chart (Individuals & Moving Range)</span><span style="color:var(--txt3);font-size:11px;margin-left:8px;">One reading per time period. Lab results, tank temperatures, batch Brix.</span></div>
+          <div class="dt-ans"><span class="lbl">n = 2–8:</span><span class="dt-res">X-bar R Chart</span><span style="color:var(--txt3);font-size:11px;margin-left:8px;">Small subgroups from a continuous process. Most common in filling lines.</span></div>
+          <div class="dt-ans"><span class="lbl">n ≥ 9:</span><span class="dt-res">X-bar S Chart</span><span style="color:var(--txt3);font-size:11px;margin-left:8px;">Large subgroups. Standard deviation (S) is more efficient estimator than R.</span></div>
+        </div>
+      </div>
+      <div class="dt-node" style="margin-top:14px;">
+        <div class="dt-q">🔢 ATTRIBUTE (count/proportion) data — e.g., defective bottles, label defects</div>
+        <div class="dt-sub">
+          <div class="dt-ans"><span class="lbl">Defectives:</span><div>
+            <div style="margin-bottom:5px;"><span class="dt-res">P-chart</span> <span style="color:var(--txt3);font-size:11px;">— proportion defective, sample size VARIES (e.g., daily batches of different size)</span></div>
+            <div><span class="dt-res">NP-chart</span> <span style="color:var(--txt3);font-size:11px;">— count of defectives, sample size is CONSTANT (e.g., always check 200 units)</span></div>
+          </div></div>
+          <div class="dt-ans"><span class="lbl">Defects:</span><div>
+            <div style="margin-bottom:5px;"><span class="dt-res">C-chart</span> <span style="color:var(--txt3);font-size:11px;">— count of defects per unit, inspection area CONSTANT (e.g., scratches per bottle in fixed size sample)</span></div>
+            <div><span class="dt-res">U-chart</span> <span style="color:var(--txt3);font-size:11px;">— defects per unit, inspection area VARIES (e.g., number of label defects per 100m of label roll)</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="co co-info" style="margin-top:14px;"><span class="co-ico">🔑</span><div><strong>Defectives vs Defects:</strong> A <em>defective</em> is a unit that fails (e.g., a bottle is defective if it fails fill volume). A <em>defect</em> is a specific flaw (one bottle can have multiple defects: a low fill AND a cosmetic scratch). Use P/NP for pass/fail decisions. Use C/U when counting multiple flaws per unit.</div></div>
+  </div>
+
+  <hr class="div">
+
+  <!-- I-MR CHART -->
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">1️⃣</span> I-MR Chart (Individuals & Moving Range)</div>
+    <div class="g2">
+      <div>
+        <div class="fbox">
+<span class="cm">I chart (Individuals):</span>
+UCL(I) = X̄ + 3(MR̄/d₂)  <span class="cm">← d₂ = 1.128 for n=2 (span of 2)</span>
+CL(I)  = X̄
+LCL(I) = X̄ − 3(MR̄/d₂)
+
+<span class="cm">MR chart (Moving Range):</span>
+UCL(MR) = D₄ × MR̄       <span class="cm">← D₄ = 3.267 for n=2</span>
+CL(MR)  = MR̄
+LCL(MR) = 0               <span class="cm">← always 0 for MR charts</span>
+
+<span class="cm">MR_i = |X_i − X_{i-1}|   (each moving range = absolute difference between consecutive points)</span>
+        </div>
+        <div class="whe">
+          <div class="whe-block">
+            <h4 style="color:var(--acc);">When to use</h4>
+            <ul>
+              <li>One measurement per time period</li>
+              <li>Batch processes (one result per batch)</li>
+              <li>Lab results (one Brix per blend)</li>
+              <li>Slow processes (1 reading/shift)</li>
+            </ul>
+          </div>
+          <div class="whe-block">
+            <h4 style="color:var(--blue2);">How to use</h4>
+            <ul>
+              <li>Plot X values on I chart (top)</li>
+              <li>Plot MR on Moving Range chart (bottom)</li>
+              <li>Apply WE rules to I chart</li>
+              <li>MR chart: look for spikes (sudden changes)</li>
+            </ul>
+          </div>
+          <div class="whe-block">
+            <h4 style="color:var(--green2);">Beverage use cases</h4>
+            <ul>
+              <li>Tank Brix at end of each blend</li>
+              <li>Pasteurisation temperature per batch</li>
+              <li>Alcohol % per fermentation batch</li>
+              <li>Daily finished product pH in lab</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ex"><strong>🧪 Lab Example — Juice Brix:</strong> QC lab measures Brix on one sample per juice blend (1 batch/day). Target: 11.5 °Bx. 20 days of data: mean X̄ = 11.52, MR̄ = 0.18. UCL(I) = 11.52 + 3×(0.18/1.128) = 11.52 + 0.479 = 11.999. LCL(I) = 11.041. On Day 17, Brix = 12.21 → above UCL → special cause → investigate syrup concentration that day.</div>
+      </div>
+      <div class="ch-wrap">
+        <div class="ch-title">I-MR Chart — Juice Batch Brix (simulated data)</div>
+        <canvas id="ch-imr" height="280"></canvas>
+        <div class="legend">
+          <div class="leg-item"><div class="leg-line" style="background:var(--blue2);"></div>Brix value</div>
+          <div class="leg-item"><div class="leg-line" style="background:var(--green2);border-style:dashed;"></div>UCL / LCL</div>
+          <div class="leg-item"><div class="leg-dot" style="background:var(--red2);"></div>Out of control point</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- X-BAR R CHART -->
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">2️⃣</span> X-bar R Chart</div>
+    <div class="g2">
+      <div>
+        <div class="fbox">
+<span class="cm">X-bar chart (process mean):</span>
+UCL(X̄) = X̄̄ + A₂ × R̄
+CL(X̄)  = X̄̄
+LCL(X̄) = X̄̄ − A₂ × R̄
+
+<span class="cm">R chart (process variation/range):</span>
+UCL(R) = D₄ × R̄
+CL(R)  = R̄
+LCL(R) = D₃ × R̄
+
+<span class="cm">Control chart constants (most common subgroup sizes):</span>
+n=2: A₂=1.880, D₃=0, D₄=3.267, d₂=1.128
+n=3: A₂=1.023, D₃=0, D₄=2.574, d₂=1.693
+n=4: A₂=0.729, D₃=0, D₄=2.282, d₂=2.059
+n=5: A₂=0.577, D₃=0, D₄=2.114, d₂=2.326
+n=7: A₂=0.419, D₃=0.076, D₄=1.924, d₂=2.704
+        </div>
+        <div class="co co-info"><span class="co-ico">⚙️</span><div><strong>Rational subgroups:</strong> Group samples that were produced together under the same conditions (e.g., 5 consecutive bottles). This ensures within-subgroup variation reflects only the common cause variation of the process — allowing detection of shifts between subgroups.</div></div>
+        <div class="ex"><strong>🍺 Beer Line Example:</strong> Fill volume on canning line, checking n=5 cans every 20 minutes. After 25 subgroups: X̄̄ = 330.4 mL, R̄ = 2.8 mL. UCL(X̄) = 330.4 + 0.577×2.8 = 332.0 mL. LCL(X̄) = 328.8 mL. UCL(R) = 2.114×2.8 = 5.9 mL. Check every subgroup: at subgroup 18 R = 6.4 mL (above UCL-R) → variability spike → check for worn filler nozzle.</div>
+      </div>
+      <div class="ch-wrap">
+        <div class="ch-title">X-bar R Chart — Canning Line Fill Volume</div>
+        <canvas id="ch-xbarr" height="280"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- P CHART -->
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">3️⃣</span> P-Chart (Proportion Defective)</div>
+    <div class="g2">
+      <div>
+        <div class="fbox">
+p̄ = Total defectives / Total units inspected
+
+<span class="cm">Control limits (vary with each sample size n_i):</span>
+UCL(p_i) = p̄ + 3 × √(p̄(1−p̄)/n_i)
+LCL(p_i) = p̄ − 3 × √(p̄(1−p̄)/n_i)     <span class="cm">← set to 0 if negative</span>
+        </div>
+        <div class="whe">
+          <div class="whe-block">
+            <h4 style="color:var(--acc);">When to use</h4>
+            <ul>
+              <li>Pass/fail inspection data</li>
+              <li>Varying batch/lot sizes</li>
+              <li>Monitoring defect rate over time</li>
+              <li>Audit findings over different lot sizes</li>
+            </ul>
+          </div>
+          <div class="whe-block">
+            <h4 style="color:var(--blue2);">Important rules</h4>
+            <ul>
+              <li>n should be large enough so np̄ ≥ 5</li>
+              <li>UCL/LCL change with each n_i</li>
+              <li>Use NP-chart if n is always constant</li>
+              <li>Minimum 25 subgroups to establish limits</li>
+            </ul>
+          </div>
+          <div class="whe-block">
+            <h4 style="color:var(--green2);">Beverage applications</h4>
+            <ul>
+              <li>Daily fill volume pass/fail rate</li>
+              <li>Label application defect rate</li>
+              <li>Audit: proportion non-conforming labels per delivery</li>
+              <li>Bottle cosmetic defect rate</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ex"><strong>🏭 Audit Example — Incoming Label Quality:</strong> Supplier delivers label reels daily. Quantities vary (4,000 to 12,000 labels/delivery). QC checks each delivery. Over 30 deliveries, 287 defective labels found in 208,000 total inspected. p̄ = 287/208,000 = 0.00138 (0.138%). UCL varies with each delivery size. On day 22, delivery of 5,000 labels had 12 defects (p = 0.0024) → above UCL → reject delivery, raise supplier SCAR.</div>
+      </div>
+      <div class="ch-wrap">
+        <div class="ch-title">P-Chart — Label Defect Rate (30 deliveries, varying n)</div>
+        <canvas id="ch-pchart" height="260"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- WESTERN ELECTRIC RULES -->
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">⚡</span> Western Electric Rules — Out-of-Control Signals</div>
+    <div class="co co-warn"><span class="co-ico">⚠️</span><div><strong>Critical concept:</strong> A point beyond ±3σ limits is NOT the only signal. These 8 rules detect patterns that indicate a process is no longer behaving randomly — even when no single point is outside the limits. Apply these rules to both the X-bar chart and the I chart.</div></div>
+    <table class="tbl" style="margin-top:14px;">
+      <tr><th>#</th><th>Rule</th><th>Signal meaning</th><th>Beverage example of what it looks like</th></tr>
+      <tr><td>1</td><td>1 point beyond ±3σ</td><td>Major sudden shift or outlier</td><td>Brix jumps to 13.2 when USL=12.0: broken dosing valve, wrong syrup batch loaded</td></tr>
+      <tr><td>2</td><td>9 consecutive same side of CL</td><td>Process mean has shifted</td><td>Fill volume always above average for 9 subgroups: filling head slowly drifting up</td></tr>
+      <tr><td>3</td><td>6 consecutive trending up/down</td><td>Gradual drift (wear, temperature change)</td><td>Carbonation level dropping shift-long: CO₂ cylinder pressure declining</td></tr>
+      <tr><td>4</td><td>14 alternating up/down</td><td>Systematic alternation — two populations mixed</td><td>Brix alternates high/low: two blending tanks alternating in production, one mis-calibrated</td></tr>
+      <tr><td>5</td><td>2 of 3 consecutive beyond ±2σ</td><td>Early warning of shift</td><td>Fill volume: 2 subgroup averages near upper warning limit — catch before it crosses UCL</td></tr>
+      <tr><td>6</td><td>4 of 5 consecutive beyond ±1σ</td><td>Process level shifting</td><td>pH values clustering at edge of control limits: acid addition slightly high</td></tr>
+      <tr><td>7</td><td>15 consecutive within ±1σ of CL</td><td>Stratification — subgroups contain mixed streams</td><td>Brix too tight — 2 blending tanks alternating exactly and averaging each other out</td></tr>
+      <tr><td>8</td><td>8 consecutive outside ±1σ</td><td>Two populations mixed</td><td>Fill volume: bimodal pattern — two filling carousels, one running fast, one slow</td></tr>
+    </table>
+    <div class="co co-ok" style="margin-top:12px;"><span class="co-ico">✅</span><div><strong>Practical tip:</strong> In daily beverage operations, Rules 1, 2, and 3 catch 90%+ of real issues. Start with these. Add rules 4–8 when you have a process that behaves suspiciously stable or shows strange patterns. Always document your reaction plan BEFORE monitoring starts — operators need to know what to do within 15 minutes of a signal.</div></div>
+  </div>
+</section>
+
+<!-- TAB 4 — MSA / GAUGE R&R ─────────────────────────────────────────
+     Measurement system analysis — instrument reliability.
+     Contains:
+       · GRR formulas: EV (repeatability), AV (reproducibility), %GRR, ndc
+       · Doughnut chart: observed variation breakdown
+       · Step-by-step example: Brix refractometer in the lab
+       · Attribute MSA (Cohen's Kappa) + Linearity and Bias
+     ──────────────────────────────────────────────────────────────── -->
+<section class="tp" id="tp-msa">
+  <div class="stitle">MSA / <span class="hl">Gauge R&R</span></div>
+  <div class="ssub">Measurement System Analysis — verifying that your measurement device and operators are reliable before trusting data for decisions. Critical in QC labs and production.</div>
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">🔬</span> What is MSA and Why It Matters</div>
+    <div class="g2">
+      <div>
+        <p style="font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:12px;">If your measurement system is unreliable, all your Six Sigma analysis is built on sand. MSA asks: <em>how much of the observed variation in your data is real process variation, and how much is just measurement error?</em></p>
+        <div class="fbox">
+Total observed variation² = Process variation² + Measurement variation²
+
+Gauge R&R = Repeatability + Reproducibility
+
+<span class="cm">Repeatability:</span>  same operator, same part, same gauge → multiple times
+                EV (Equipment Variation) = how much the gauge itself varies
+
+<span class="cm">Reproducibility:</span> different operators, same part, same gauge
+                AV (Appraiser Variation) = how much operators differ from each other
+
+%GRR = (GRR std dev / Total std dev) × 100
+
+ndc = 1.41 × (Part std dev / GRR std dev)  <span class="cm">← number of distinct categories</span>
+        </div>
+        <table class="tbl" style="margin-top:12px;">
+          <tr><th>%GRR</th><th>ndc</th><th>Decision</th></tr>
+          <tr><td class="cell-g">&lt;10%</td><td class="cell-g">≥5</td><td>✅ Acceptable — use the gauge</td></tr>
+          <tr><td class="cell-a">10–30%</td><td class="cell-a">3–4</td><td>⚠️ Marginal — may be acceptable depending on application risk</td></tr>
+          <tr><td class="cell-r">&gt;30%</td><td class="cell-r">&lt;3</td><td>❌ Unacceptable — fix or replace measurement system</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="ch-wrap">
+          <div class="ch-title">Variation Components — Gauge R&R Breakdown</div>
+          <canvas id="ch-grr" height="260"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">🍶</span> Step-by-Step: Running a Gauge R&R in a Beverage Lab</div>
+    <div class="co co-acc"><span class="co-ico">🏭</span><div><strong>Scenario:</strong> You want to verify that your lab refractometer is suitable for measuring Brix on juice samples. The product specification is 11.5 ±0.3 °Bx. You have 2 lab analysts and will use the crossed (full factorial) Gauge R&R design.</div></div>
+    <div class="g12">
+      <ol class="steps">
+        <li><strong>Select 10 samples</strong> that span the expected range of process variation — ideally covering from below LSL to above USL. Label them blindly (A–J). Do NOT tell operators which sample is which.</li>
+        <li><strong>Each operator measures each sample twice</strong> (2 replicates), in random order. Total: 2 operators × 10 samples × 2 replicates = 40 measurements. Record in a standard GRR data form.</li>
+        <li><strong>Calculate Repeatability (EV):</strong> For each sample+operator combination, calculate the range of the 2 replicates. Average all ranges → R̄. EV = R̄ / d₂. For 2 replicates, d₂ = 1.128.</li>
+        <li><strong>Calculate Reproducibility (AV):</strong> For each operator, calculate their grand average across all measurements. Range of operator averages → R_op. AV = √[(R_op / d₂*)² − (EV²/nr)] where d₂* depends on number of operators.</li>
+        <li><strong>Calculate %GRR:</strong> GRR = √(EV² + AV²). %GRR = GRR / TV × 100 (TV = total variation from the study).</li>
+        <li><strong>Calculate ndc:</strong> ndc = 1.41 × (σ_part / σ_GRR). Must be ≥5 for the gauge to distinguish between different product batches.</li>
+        <li><strong>Decision:</strong> If %GRR &lt;10% and ndc ≥5 → approve the measurement system. If marginal (10–30%), document the risk. If &gt;30% → investigate whether it is the equipment (EV high) or the operators (AV high) and address accordingly.</li>
+      </ol>
+      <div>
+        <div class="ex">
+          <strong>🧪 Results Example — Juice Brix Refractometer:</strong><br><br>
+          Operator 1 avg: 11.51 °Bx | Operator 2 avg: 11.54 °Bx<br>
+          Repeatability σ (EV): 0.024 °Bx<br>
+          Reproducibility σ (AV): 0.018 °Bx<br>
+          GRR σ: √(0.024² + 0.018²) = 0.030 °Bx<br>
+          Total study σ: 0.156 °Bx<br>
+          <strong>%GRR = 0.030/0.156 × 100 = 19.2%</strong> → Marginal<br>
+          <strong>ndc = 1.41 × 0.153/0.030 = 7.2</strong> → OK (≥5)<br><br>
+          <strong>Conclusion:</strong> ndc is OK (can distinguish batches), but %GRR is marginal. Since AV > EV, the issue is <em>operator technique</em> — one analyst reads slightly higher. Action: re-train both analysts on consistent sample prep (temperature equilibration) and re-run study.
+        </div>
+        <div class="co co-info" style="margin-top:12px;"><span class="co-ico">💡</span><div><strong>EV &gt; AV:</strong> Equipment problem — calibrate, service, or replace the gauge.<br><strong>AV &gt; EV:</strong> Operator problem — re-train, clarify procedure, improve lighting/ergonomics.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">📋</span> MSA for Audit and Lab — Beyond Gauge R&R</div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-title" style="color:var(--acc);">Attribute MSA (Pass/Fail)</div>
+        <p>When the measurement is a judgement (pass/fail, acceptable/reject) rather than a number. Used in visual inspection, sensory checks, audit checklists.</p>
+        <div class="fbox" style="margin-top:10px;">
+Method: Kappa statistic (Cohen's Kappa)
+κ = (P_observed − P_expected) / (1 − P_expected)
+
+κ > 0.9 → Excellent agreement
+κ 0.7–0.9 → Good
+κ 0.5–0.7 → Moderate — training needed
+κ < 0.5 → Poor — redefine criteria
+        </div>
+        <div class="ex"><strong>🍶 Example — Bottle Cosmetic Inspection:</strong> 3 inspectors each evaluate 50 bottles (mix of good and defective) twice. Kappa = 0.72 (Good). Inspectors mostly agree, but some disagreement on "light scratches". Action: create visual standard reference board with borderline examples pinned at the workstation.</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--acc);">Linearity & Bias Study</div>
+        <p>Checks whether the gauge reads accurately across the full operating range (linearity) and whether it consistently reads high or low vs a reference value (bias).</p>
+        <div class="fbox" style="margin-top:10px;">
+Bias     = mean(observed) − reference value
+% Bias   = Bias / Process variation × 100
+Target: |% Bias| < 5%
+
+Linearity: plot Bias vs Reference Value
+If bias changes across the range → linearity error
+(e.g., refractometer reads accurately at 8°Bx but
+reads +0.2°Bx too high at 14°Bx)
+        </div>
+        <div class="ex"><strong>🧪 Example — pH Meter Linearity:</strong> Check meter at pH 3.0, 3.5, 4.0, 4.5, 5.0 using certified buffer solutions. If bias at pH 3.0 is +0.05 but at pH 5.0 is −0.08 → linearity problem → electrode aging → replace electrode. Critical for preservative efficacy monitoring where pH 3.8 vs 4.0 matters for legal compliance.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 5 — HYPOTHESIS TESTS ────────────────────────────────────────
+     Statistical tests: replacing opinion with numerical evidence.
+     Contains:
+       · H₀/H₁ logic, Type I/II errors, test power
+       · 1-sample t (beer ABV) + 2-sample Welch t (Line A vs B)
+       · One-way ANOVA + Tukey HSD (3 shifts, Brix)
+       · Chi-square (defects by type and by line)
+     ──────────────────────────────────────────────────────────────── -->
+<section class="tp" id="tp-hyptest">
+  <div class="stitle">Hypothesis <span class="hl">Testing</span></div>
+  <div class="ssub">Using data to make statistically sound decisions — replacing opinion with evidence. The engine of the Analyse phase.</div>
+
+  <!-- FOUNDATION -->
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">🧠</span> The Logic of Hypothesis Testing</div>
+    <div class="g2">
+      <div>
+        <div class="fbox">
+H₀ (Null hypothesis):     "No difference exists" / "No effect exists"
+H₁ (Alternative hypothesis): "A difference exists"
+
+p-value:  probability of observing our data (or more extreme) IF H₀ is true
+
+Decision rule:
+  p &lt; 0.05  → Reject H₀  (statistically significant — evidence of a difference)
+  p ≥ 0.05  → Fail to reject H₀  (insufficient evidence for a difference)
+
+α = significance level (risk of false positive) = 0.05 (default)
+β = probability of false negative (missing a real difference)
+Power = 1 − β  (aim for ≥80%)
+        </div>
+        <table class="tbl" style="margin-top:12px;">
+          <tr><th></th><th>H₀ is True</th><th>H₀ is False</th></tr>
+          <tr><td>Reject H₀</td><td class="cell-r">Type I Error (α) — False alarm</td><td class="cell-g">Correct decision ✅</td></tr>
+          <tr><td>Fail to reject H₀</td><td class="cell-g">Correct decision ✅</td><td class="cell-a">Type II Error (β) — Missed signal</td></tr>
+        </table>
+        <div class="co co-info" style="margin-top:12px;"><span class="co-ico">💡</span><div><strong>Power and sample size:</strong> Before running a test, always ask: if a real difference exists, how likely am I to detect it? Use a power analysis to determine minimum sample size. Low n = underpowered study = missing real effects. In beverage testing, a practical rule: collect at least n=30 per group for continuous data before doing a t-test.</div></div>
+      </div>
+      <div class="card" style="border-top:2px solid var(--acc);">
+        <div class="card-title" style="color:var(--acc);">⚠️ Common Mistakes in Hypothesis Testing</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:6px;">
+          <li style="font-size:13px;color:var(--txt2);display:flex;gap:8px;"><span style="color:var(--red2);">✗</span><span><strong style="color:var(--txt);">Confusing statistical vs practical significance.</strong> p=0.001 (very significant) with a mean difference of 0.01 mL fill volume is statistically real but operationally irrelevant.</span></li>
+          <li style="font-size:13px;color:var(--txt2);display:flex;gap:8px;"><span style="color:var(--red2);">✗</span><span><strong style="color:var(--txt);">Skipping normality check.</strong> Applying t-test to sensory scores (ordinal data, not normal) → invalid result. Use Mann-Whitney instead.</span></li>
+          <li style="font-size:13px;color:var(--txt2);display:flex;gap:8px;"><span style="color:var(--red2);">✗</span><span><strong style="color:var(--txt);">Insufficient sample size.</strong> Testing 5 samples per group with a t-test → power &lt;30% — likely to miss real differences.</span></li>
+          <li style="font-size:13px;color:var(--txt2);display:flex;gap:8px;"><span style="color:var(--red2);">✗</span><span><strong style="color:var(--txt);">Multiple testing without correction.</strong> Running 20 t-tests on the same data → expect 1 false positive by chance alone.</span></li>
+          <li style="font-size:13px;color:var(--txt2);display:flex;gap:8px;"><span style="color:var(--red2);">✗</span><span><strong style="color:var(--txt);">Using paired test for independent samples</strong> or vice versa → biased results.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 1-SAMPLE T-TEST -->
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">1️⃣</span> 1-Sample t-Test — Is the mean equal to a target?</div>
+    <div class="g2">
+      <div>
+        <div class="fbox">
+H₀: μ = μ₀   (population mean equals target value)
+H₁: μ ≠ μ₀   (two-tailed) or μ &gt; μ₀ / μ &lt; μ₀ (one-tailed)
+
+t = (X̄ − μ₀) / (s / √n)
+
+Degrees of freedom: df = n − 1
+Compare t to t-table (df, α) or use p-value directly.
+
+Assumptions: data approximately normal, random sample.
+Robust to non-normality for n ≥ 30 (Central Limit Theorem).
+        </div>
+        <div class="whe">
+          <div class="whe-block">
+            <h4 style="color:var(--acc);">When to use</h4>
+            <ul><li>Comparing process mean to a target or spec</li><li>Checking if a new batch meets nominal</li><li>Lab qualification: does instrument read certified reference correctly?</li></ul>
+          </div>
+          <div class="whe-block">
+            <h4 style="color:var(--blue2);">What you get</h4>
+            <ul><li>t-statistic and p-value</li><li>Confidence interval for the true mean</li><li>Decision: is the mean significantly different from target?</li></ul>
+          </div>
+          <div class="whe-block">
+            <h4 style="color:var(--green2);">Beverage use cases</h4>
+            <ul><li>Is new supplier sugar at 99.8% purity (target)?</li><li>Is this batch alcohol at 5.0% ABV as declared?</li><li>Is our calibrated scale reading 200g reference weight correctly?</li></ul>
+          </div>
+        </div>
+        <div class="ex">
+          <strong>🍺 Example — Alcohol Content Compliance:</strong><br>
+          A brewery must declare 5.0% ABV on their pale ale. The regulator will fine them if the actual content is significantly below 5.0%. QC samples n=15 bottles from a batch.<br>
+          Results: X̄ = 4.87%, s = 0.18%.<br>
+          H₀: μ = 5.0%, H₁: μ &lt; 5.0% (one-tailed).<br>
+          t = (4.87 − 5.0) / (0.18/√15) = −0.13/0.0465 = −2.80<br>
+          p = 0.007 (df=14, one-tailed) → p &lt; 0.05 → <strong>Reject H₀.</strong><br>
+          <strong>Conclusion:</strong> Batch mean is significantly below declared 5.0%. Hold batch for re-test / reformulation before shipping.
+        </div>
+      </div>
+      <div class="ch-wrap">
+        <div class="ch-title">1-Sample t-Test — Alcohol Content vs 5.0% Target</div>
+        <canvas id="ch-ttest1" height="280"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 2-SAMPLE T-TEST -->
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">2️⃣</span> 2-Sample t-Test — Are two group means different?</div>
+    <div class="g2">
+      <div>
+        <div class="fbox">
+H₀: μ₁ = μ₂    (two groups have the same mean)
+H₁: μ₁ ≠ μ₂   (two-tailed)
+
+<span class="cm">Welch's t-test (assumes unequal variances — recommended default):</span>
+t = (X̄₁ − X̄₂) / √(s₁²/n₁ + s₂²/n₂)
+
+<span class="cm">First test equality of variances:</span>
+F-test: F = s₁²/s₂²   (df1=n₁-1, df2=n₂-1)
+p &gt; 0.05 → equal variances → use pooled t-test
+p &lt; 0.05 → unequal → use Welch's t-test (safer default)
+
+Assumptions: both groups approximately normal, independent samples.
+        </div>
+        <div class="ex">
+          <strong>🧃 Example — Two Filling Lines Comparison:</strong><br>
+          Line A and Line B fill 330mL juice cartons. QC suspects Line B overfills. Data from one shift (n=40 each):<br>
+          Line A: X̄=331.2 mL, s=1.8 mL<br>
+          Line B: X̄=333.7 mL, s=2.1 mL<br>
+          H₀: μ_A = μ_B, H₁: μ_A ≠ μ_B<br>
+          Welch's t = (331.2−333.7)/√(1.8²/40 + 2.1²/40) = −2.5/√(0.081+0.110) = −2.5/0.437 = −5.72<br>
+          p &lt; 0.0001 → <strong>Highly significant.</strong><br>
+          <strong>Conclusion:</strong> Line B fills significantly more than Line A. Investigate Line B fill head calibration. Over-fill costs estimated at $18K/year in product giveaway.
+        </div>
+        <div class="co co-info"><span class="co-ico">💡</span><div><strong>Paired vs Independent:</strong> Use a <em>paired t-test</em> when the same units are measured before and after (e.g., same bottles tested before and after a filter change). Use independent 2-sample t-test when comparing two completely separate groups. Pairing removes individual unit-to-unit variation and increases power dramatically.</div></div>
+        <div class="ex">
+          <strong>🧪 Paired Example — Before/After Filter:</strong> 20 batches of beer measured for turbidity before and after installing a new filter cartridge. Since it's the SAME batches, use paired t-test. Result: mean reduction = 0.42 NTU, t = 4.88, p &lt; 0.001 → filter significantly improves clarity.
+        </div>
+      </div>
+      <div class="ch-wrap">
+        <div class="ch-title">2-Sample t-Test — Fill Volume Distribution Comparison</div>
+        <canvas id="ch-ttest2" height="280"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- ONE-WAY ANOVA -->
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">3️⃣</span> One-Way ANOVA — Comparing 3 or more groups</div>
+    <div class="g2">
+      <div>
+        <div class="fbox">
+H₀: μ₁ = μ₂ = μ₃ = ... = μk   (all group means equal)
+H₁: at least one mean is different
+
+F = MS_between / MS_within
+  = (SS_between / df_between) / (SS_within / df_within)
+
+df_between = k − 1   (k = number of groups)
+df_within  = N − k   (N = total observations)
+
+p &lt; 0.05 → reject H₀ → at least one group is different
+(ANOVA does NOT tell you WHICH groups differ → use post-hoc tests)
+
+Post-hoc tests (after significant ANOVA):
+  Tukey HSD: compares all pairs, controls family-wise error rate
+  Bonferroni: more conservative, good for small number of comparisons
+        </div>
+        <div class="whe">
+          <div class="whe-block">
+            <h4 style="color:var(--acc);">When to use</h4>
+            <ul><li>Comparing 3+ shifts, operators, lines, suppliers</li><li>Testing 3+ formulation batches</li><li>Multi-level factor screening</li></ul>
+          </div>
+          <div class="whe-block">
+            <h4 style="color:var(--blue2);">Assumptions</h4>
+            <ul><li>Each group approximately normal</li><li>Equal variances (Levene's test: p&gt;0.05)</li><li>Independent observations</li></ul>
+          </div>
+          <div class="whe-block">
+            <h4 style="color:var(--green2);">Beverage use cases</h4>
+            <ul><li>Do 3 shifts have the same Brix variation?</li><li>Does yeast strain (A, B, C) affect final ABV?</li><li>Do 4 sugar suppliers give the same product taste score?</li></ul>
+          </div>
+        </div>
+        <div class="ex">
+          <strong>🍺 Example — 3-Shift Brix Comparison:</strong><br>
+          Plant runs 3 shifts. QC suspects shift 3 has higher Brix variation. One month's data: n=28 measurements per shift.<br>
+          Shift 1: X̄=11.48, s=0.12 | Shift 2: X̄=11.51, s=0.13 | Shift 3: X̄=11.67, s=0.19<br>
+          One-way ANOVA: F=14.3, p&lt;0.001 → Reject H₀ → at least one shift different.<br>
+          Tukey HSD: Shift 3 vs 1 (p&lt;0.001) ✓ different; Shift 3 vs 2 (p&lt;0.001) ✓ different; Shift 1 vs 2 (p=0.31) — no difference.<br>
+          <strong>Conclusion:</strong> Shift 3 runs systematically higher Brix. Investigate: different syrup pump setting, different operator mixing technique, different raw material batch used on night shift.
+        </div>
+      </div>
+      <div class="ch-wrap">
+        <div class="ch-title">ANOVA — Brix by Shift (Shift 3 is different)</div>
+        <canvas id="ch-anova" height="280"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- CHI-SQUARE -->
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">4️⃣</span> Chi-Square Test — Categorical data & proportions</div>
+    <div class="g2">
+      <div>
+        <div class="fbox">
+<span class="cm">Chi-square test of independence:</span>
+H₀: Two categorical variables are independent (no association)
+H₁: There is an association between them
+
+χ² = Σ [(O_ij − E_ij)² / E_ij]
+
+E_ij = (row total_i × column total_j) / grand total
+df = (rows−1) × (columns−1)
+Rule: all expected cell counts ≥ 5 (if not, use Fisher's exact test)
+
+<span class="cm">Chi-square goodness of fit:</span>
+H₀: Observed frequencies match expected distribution
+H₁: They do not match
+df = k − 1   (k = number of categories)
+        </div>
+        <div class="whe">
+          <div class="whe-block">
+            <h4 style="color:var(--acc);">When to use</h4>
+            <ul><li>Association between two categorical variables</li><li>Defect type distribution by machine/line</li><li>Audit findings by supplier vs category</li></ul>
+          </div>
+          <div class="whe-block">
+            <h4 style="color:var(--blue2);">What you get</h4>
+            <ul><li>χ² statistic and p-value</li><li>Contingency table analysis</li><li>Which cells contribute most to the association</li></ul>
+          </div>
+          <div class="whe-block">
+            <h4 style="color:var(--green2);">Beverage use cases</h4>
+            <ul><li>Is defect type (fill/label/cap) independent of which line?</li><li>Are audit non-conformances associated with shift?</li><li>Are customer complaint categories independent of SKU?</li></ul>
+          </div>
+        </div>
+        <div class="ex">
+          <strong>🏭 Audit Example — Defect Type by Production Line:</strong><br>
+          Quality audit finds defects across 3 lines over one month. Are defect types distributed similarly across lines, or does one line have a different pattern?<br><br>
+          Contingency table (observed counts):<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fill defect | Label defect | Cap defect | Total<br>
+          Line A: &nbsp;&nbsp;&nbsp;45 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 12 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 8 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 65<br>
+          Line B: &nbsp;&nbsp;&nbsp;38 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 31 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 6 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 75<br>
+          Line C: &nbsp;&nbsp;&nbsp;41 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 15 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 9 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 65<br>
+          χ² = 12.84, df=4, p = 0.012 → <strong>Significant.</strong><br>
+          Residuals show: Line B has far more label defects than expected. <strong>Action:</strong> investigate Line B labeller — worn pad, incorrect label tension.
+        </div>
+      </div>
+      <div class="ch-wrap">
+        <div class="ch-title">Defect Types by Line — Chi-Square Contingency (stacked bar)</div>
+        <canvas id="ch-chisq" height="280"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 6 — REGRESSION & CORRELATION ───────────────────────────────
+     Quantifying relationships between variables (Y = f(X)).
+     Contains:
+       · Pearson r + Spearman ρ with CO₂ vs temperature scatter
+       · Simple linear regression: syrup temperature → Brix deviation
+       · Multiple regression: dissolved oxygen in canned beer
+       · Regression type selection table
+     ──────────────────────────────────────────────────────────────── -->
+<section class="tp" id="tp-regression">
+  <div class="stitle">Regression &amp; <span class="hl">Correlation</span></div>
+  <div class="ssub">Quantifying relationships between variables — understanding what drives your process outputs (Y = f(X)). The mathematical backbone of root cause verification.</div>
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">📈</span> Correlation — Is there a relationship?</div>
+    <div class="g2">
+      <div>
+        <div class="fbox">
+<span class="cm">Pearson r (for normal, continuous data):</span>
+r = Σ[(xi−X̄)(yi−Ȳ)] / √[Σ(xi−X̄)² × Σ(yi−Ȳ)²]
+
+Range: −1 to +1
+  r = +1: perfect positive correlation
+  r = −1: perfect negative correlation
+  r =  0: no linear correlation
+
+Interpretation:
+|r| &lt; 0.3 → weak / negligible
+|r| 0.3–0.7 → moderate
+|r| &gt; 0.7 → strong
+
+Test significance: t = r√(n−2)/√(1−r²), df = n−2
+p &lt; 0.05 → correlation is statistically significant
+
+<span class="cm">Spearman ρ: use when data is ordinal or non-normal (rank-based)</span>
+        </div>
+        <div class="co co-warn"><span class="co-ico">⚠️</span><div><strong>Correlation ≠ Causation.</strong> Even a strong r=0.92 between two variables does not mean one causes the other. Example: beer sales and ice cream sales both correlate with temperature. In Six Sigma, use correlation to identify candidates, then use controlled experiments (DOE) to prove causation.</div></div>
+        <div class="ex">
+          <strong>🍺 Example — Temperature vs Carbonation:</strong> You measure tank temperature and dissolved CO₂ on 35 consecutive batches. r = −0.88, p &lt; 0.001. Strong negative correlation: as temperature rises, carbonation drops. This validates temperature as a key input X to investigate in your DMAIC Analyse phase. Follow up with a DOE to confirm the causal relationship.
+        </div>
+      </div>
+      <div class="ch-wrap">
+        <div class="ch-title">Scatter Plot — Tank Temperature vs CO₂ Volume (r = −0.88)</div>
+        <canvas id="ch-scatter" height="280"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">📉</span> Simple Linear Regression</div>
+    <div class="g2">
+      <div>
+        <div class="fbox">
+Ŷ = β₀ + β₁X + ε
+
+β₁ = Σ[(xi−X̄)(yi−Ȳ)] / Σ(xi−X̄)²   <span class="cm">← slope</span>
+β₀ = Ȳ − β₁X̄                          <span class="cm">← intercept</span>
+
+R² = SS_regression / SS_total = r²
+    = % of variation in Y explained by X
+
+Interpret p-value of β₁:
+  p &lt; 0.05 → X is a significant predictor of Y
+
+Residuals must be:
+  1. Normal (histogram or Anderson-Darling test)
+  2. Constant variance (no fan shape in residuals vs fitted)
+  3. Independent (no pattern vs order)
+        </div>
+        <div class="ex">
+          <strong>🥤 Example — Syrup Temperature vs Brix Variation:</strong><br>
+          You suspect warm syrup causes high Brix variability. Data: 40 blends, X = syrup inlet temperature (°C), Y = final Brix deviation from target (°Bx absolute).<br>
+          Regression output: Ŷ = 0.04 + 0.012×X. β₁ p-value = 0.001. R² = 61%.<br>
+          Interpretation: For every 1°C increase in syrup temperature, Brix deviation increases by 0.012°Bx on average. Temperature explains 61% of the variation.<br>
+          Prediction: at 25°C, expected deviation = 0.04 + 0.012×25 = 0.34°Bx.<br>
+          <strong>Action:</strong> Install syrup temperature control set at ≤18°C. Predicted Brix deviation: 0.04 + 0.012×18 = 0.26°Bx (24% improvement in expected deviation, based on model).
+        </div>
+      </div>
+      <div class="ch-wrap">
+        <div class="ch-title">Simple Regression — Syrup Temperature vs Brix Deviation</div>
+        <canvas id="ch-regr" height="280"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">📊</span> Multiple Regression — Several X's predicting Y</div>
+    <div class="g2">
+      <div>
+        <div class="fbox">
+Ŷ = β₀ + β₁X₁ + β₂X₂ + β₃X₃ + ... + ε
+
+Adjusted R² = 1 − [(1−R²)(n−1)/(n−k−1)]
+  <span class="cm">← penalises for adding predictors; use this (not R²) to compare models</span>
+
+VIF (Variance Inflation Factor):
+  VIF &gt; 5 → potential multicollinearity (predictors correlated with each other)
+  VIF &gt; 10 → serious multicollinearity → remove one of the correlated predictors
+
+p-value for each β_i: is this predictor significant after controlling for others?
+        </div>
+        <div class="co co-info"><span class="co-ico">🔑</span><div><strong>Model building order:</strong> (1) Run correlation matrix to identify candidate X's. (2) Build model with all candidates. (3) Remove predictors with p &gt; 0.05 and VIF &gt; 5 one at a time. (4) Check residuals. (5) Validate on hold-out data if possible. In beverage, always include the most operationally important X's even if borderline significant.</div></div>
+        <div class="ex">
+          <strong>🍺 Example — Dissolved Oxygen in Canned Beer:</strong><br>
+          Response Y = dissolved oxygen (ppb) in can headspace.<br>
+          Candidate predictors: X₁ = fill speed (cpm), X₂ = seaming gap (mm), X₃ = CO₂ purge duration (s), X₄ = product temperature (°C).<br>
+          Final model: Ŷ = 145 − 0.8×X₁ + 12×X₂ − 0.9×X₃ + 3.1×X₄<br>
+          Adjusted R² = 78%. All predictors p &lt; 0.05. VIF all &lt; 3.<br>
+          Most influential: seaming gap (β₂=12 ppb/mm). Action priority: tighten seaming gap specification from ±0.3 mm to ±0.1 mm. Predicted DO reduction from 85 ppb to 32 ppb. <strong>Impact: shelf life extended from 4 to 7 months.</strong>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="border-top:2px solid var(--acc);">
+          <div class="card-title" style="color:var(--acc);">When to use which regression</div>
+          <table class="tbl ref-small" style="margin-top:8px;">
+            <tr><th>Scenario</th><th>Use</th></tr>
+            <tr><td>1 continuous X → continuous Y</td><td>Simple linear regression</td></tr>
+            <tr><td>Multiple continuous X → continuous Y</td><td>Multiple linear regression</td></tr>
+            <tr><td>X → binary Y (pass/fail)</td><td>Logistic regression</td></tr>
+            <tr><td>X → count Y (defects/unit)</td><td>Poisson regression</td></tr>
+            <tr><td>Non-linear relationship obvious</td><td>Polynomial or transform first</td></tr>
+            <tr><td>Ordinal Y (sensory 1–10)</td><td>Ordinal regression or Spearman corr.</td></tr>
+          </table>
+          <div class="co co-acc" style="margin-top:12px;"><span class="co-ico">🍶</span><div><strong>Logistic regression example:</strong> Does fermentation temperature (X, continuous) predict whether a batch passes microbiological safety test (Y: pass=1, fail=0)? Logistic regression gives P(pass) = 1/(1+e^(−(β₀+β₁×temp))). If β₁ is negative and significant → higher temp → higher probability of failing the micro test.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 7 — DESIGN OF EXPERIMENTS ──────────────────────────────────
+     The most powerful tool for discovering what drives the process.
+     Contains:
+       · OFAT vs factorial — why DOE captures interactions
+       · Interaction plot: CO₂ pressure × temperature
+       · Full factorial 2³: craft beer carbonation optimisation
+         (8 runs, Yates matrix, effects calculation, main effects plot)
+       · DOE type selection table (Full/Fractional/PB/RSM/Taguchi)
+     ──────────────────────────────────────────────────────────────── -->
+<section class="tp" id="tp-doe">
+  <div class="stitle">Design of <span class="hl">Experiments</span></div>
+  <div class="ssub">The most powerful tool for discovering what really drives your process. DOE tests multiple factors simultaneously, revealing interactions that one-factor-at-a-time testing misses completely.</div>
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">🧠</span> Why DOE — OFAT vs Factorial</div>
+    <div class="g2">
+      <div>
+        <p style="font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:12px;">One Factor At a Time (OFAT) — the traditional engineering approach — changes one X while holding everything else fixed. This misses <strong>interaction effects</strong>: situations where the effect of X₁ on Y <em>depends on the level of X₂</em>. In beverage processes, interactions are common and important.</p>
+        <div class="co co-warn"><span class="co-ico">⚠️</span><div><strong>Classic OFAT failure:</strong> An engineer optimises CO₂ pressure at low temperature and gets 2.8 vol CO₂. Then optimises temperature at that CO₂ pressure. But the true optimum (2.4 vol CO₂ at high temperature) was never tested because the interaction between the two was never explored. A 2² factorial DOE would have found this in 4 runs.</div></div>
+        <div class="fbox">
+2-factor full factorial: 2² = 4 runs (explore both factors + their interaction)
+3-factor full factorial: 2³ = 8 runs
+4-factor full factorial: 2⁴ = 16 runs
+5-factor full factorial: 2⁵ = 32 runs → consider fractional
+
+Key outputs:
+  Main effect of A: average change in Y when A goes low → high
+  Main effect of B: average change in Y when B goes low → high
+  Interaction AB: effect of A depends on level of B (and vice versa)
+        </div>
+      </div>
+      <div class="ch-wrap">
+        <div class="ch-title">Interaction Plot — CO₂ Pressure × Temperature on Carbonation</div>
+        <canvas id="ch-interaction" height="280"></canvas>
+        <div style="font-size:11.5px;color:var(--txt3);margin-top:8px;">Parallel lines = no interaction. Crossing/non-parallel lines = interaction present. Here, the optimal CO₂ pressure DEPENDS on temperature — OFAT would have missed this.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">🍶</span> Full Factorial DOE — Step-by-Step Beverage Example</div>
+    <div class="co co-acc"><span class="co-ico">🏭</span><div><strong>Scenario:</strong> You are optimising the carbonation process for a craft beer. You have 3 factors each at 2 levels. Response Y = CO₂ volume in final can (vol). Target: 2.60 vol. This is a 2³ full factorial = 8 runs.</div></div>
+    <div class="g2">
+      <div>
+        <table class="tbl">
+          <tr><th>Factor</th><th>−1 (Low)</th><th>+1 (High)</th></tr>
+          <tr><td>A: Carbonation tank pressure (bar)</td><td>2.8</td><td>3.4</td></tr>
+          <tr><td>B: Product temperature (°C)</td><td>2</td><td>8</td></tr>
+          <tr><td>C: Transfer line velocity (m/s)</td><td>0.5</td><td>1.2</td></tr>
+        </table>
+        <div style="margin-top:12px;">
+        <table class="tbl">
+          <tr><th>Run</th><th>A</th><th>B</th><th>C</th><th>Y (vol CO₂)</th></tr>
+          <tr><td>1</td><td>−</td><td>−</td><td>−</td><td>2.41</td></tr>
+          <tr><td>2</td><td>+</td><td>−</td><td>−</td><td>2.74</td></tr>
+          <tr><td>3</td><td>−</td><td>+</td><td>−</td><td>2.28</td></tr>
+          <tr><td>4</td><td>+</td><td>+</td><td>−</td><td>2.56</td></tr>
+          <tr><td>5</td><td>−</td><td>−</td><td>+</td><td>2.39</td></tr>
+          <tr><td>6</td><td>+</td><td>−</td><td>+</td><td>2.71</td></tr>
+          <tr><td>7</td><td>−</td><td>+</td><td>+</td><td>2.26</td></tr>
+          <tr><td>8</td><td>+</td><td>+</td><td>+</td><td>2.53</td></tr>
+        </table>
+        </div>
+        <ol class="steps" style="margin-top:12px;">
+          <li><strong>Randomise run order</strong> to avoid time trends confounding results.</li>
+          <li><strong>Calculate main effect of A (pressure):</strong> Avg Y at A+ minus Avg Y at A−. A+ avg = (2.74+2.56+2.71+2.53)/4 = 2.635. A− avg = (2.41+2.28+2.39+2.26)/4 = 2.335. Main effect A = 2.635−2.335 = <strong>+0.30 vol CO₂ per bar increase.</strong></li>
+          <li><strong>Calculate main effect of B (temperature):</strong> B+ avg = 2.408, B− avg = 2.563. Main effect B = −0.155. Higher temp → less carbonation.</li>
+          <li><strong>Calculate main effect of C:</strong> +0.005 (negligible).</li>
+          <li><strong>Calculate AB interaction:</strong> At B− : effect of A = (2.74+2.71)/2−(2.41+2.39)/2 = 0.325. At B+: effect of A = (2.56+2.53)/2−(2.28+2.26)/2 = 0.275. Interaction = 0.325−0.275 = 0.050 (small).</li>
+          <li><strong>Decision:</strong> Factor A (pressure) dominates. Factor B (temperature) important. Factor C (velocity) negligible. <strong>Optimal settings: A=High (3.4 bar), B=Low (2°C), C=either (no significant effect).</strong></li>
+          <li><strong>Run confirmation experiment</strong> at optimal settings. Result: 2.72 vol CO₂ — within Cpk ≥1.33 of target.</li>
+        </ol>
+      </div>
+      <div>
+        <div class="ch-wrap">
+          <div class="ch-title">Main Effects Plot — CO₂ Volume Response</div>
+          <canvas id="ch-maineff" height="250"></canvas>
+        </div>
+        <div class="co co-ok" style="margin-top:12px;"><span class="co-ico">✅</span><div><strong>DOE Golden Rules:</strong><br>
+        1. Always randomise run order.<br>
+        2. Always include replicate runs (run the design 2–3 times for error estimation).<br>
+        3. Run at genuine extremes (±20% of normal range) for maximum information.<br>
+        4. Always confirm with a verification run at optimal settings before implementing.<br>
+        5. Block on nuisance factors (e.g., if you must run across 2 days, use Day as a block).</div></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">🗂️</span> DOE Type Selection Guide for Beverage Industry</div>
+    <table class="tbl">
+      <tr><th>DOE Type</th><th>Factors</th><th>Runs</th><th>Best for</th><th>Beverage example</th></tr>
+      <tr><td>Full factorial 2²</td><td>2</td><td>4</td><td>Full understanding, interactions, 2 critical factors</td><td>Optimise carbonation: pressure × temperature</td></tr>
+      <tr><td>Full factorial 2³</td><td>3</td><td>8</td><td>3 key factors, want all interactions</td><td>Fermentation: yeast pitch × temp × gravity</td></tr>
+      <tr><td>Full factorial 2⁴</td><td>4</td><td>16</td><td>4 factors, moderate study</td><td>Juice blending: 4 ingredient concentrations</td></tr>
+      <tr><td>Fractional factorial 2⁵⁻²</td><td>5</td><td>8</td><td>Screening 5 factors efficiently, some aliasing</td><td>CIP optimisation: 5 cleaning parameters</td></tr>
+      <tr><td>Plackett-Burman (12-run)</td><td>Up to 11</td><td>12</td><td>Screening many factors, no interactions needed</td><td>Screen 11 process variables affecting shelf life</td></tr>
+      <tr><td>Response Surface (CCD)</td><td>2–4</td><td>14–30</td><td>Optimisation after screening, find true optimum</td><td>Optimise HPP: pressure, time, temperature for vitamin C + kill rate</td></tr>
+      <tr><td>Taguchi L9</td><td>Up to 4</td><td>9</td><td>Robust design against noise factors</td><td>Pasteuriser settings robust against raw material variation</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- TAB 8 — SAMPLING & AUDITING ─────────────────────────────────────
+     How much to sample? How to structure an audit?
+     Contains:
+       · AQL / ISO 2859-1 plans: letter codes, Ac, Re
+       · OC curve: probability of acceptance vs % defective
+       · Sample size formulas (mean, proportions)
+       · 6 sampling strategies with beverage examples
+     ──────────────────────────────────────────────────────────────── -->
+<section class="tp" id="tp-sampling">
+  <div class="stitle">Sampling &amp; <span class="hl">Auditing</span></div>
+  <div class="ssub">How much to sample? How to structure an audit? Statistical sampling theory applied to beverage QC, incoming goods inspection, and internal audits.</div>
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">🎯</span> AQL Sampling Plans — Incoming Goods Inspection</div>
+    <div class="g2">
+      <div>
+        <p style="font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:12px;">AQL (Acceptable Quality Level) is the maximum percentage of defectives considered acceptable in a lot. ISO 2859-1 (MIL-STD-105E) sampling tables give you the correct sample size and acceptance/rejection numbers for each lot size and AQL level.</p>
+        <div class="fbox">
+AQL common levels in beverage industry:
+  Critical defects (food safety, leakage):  AQL 0.065 or 0.10
+  Major defects (fill volume, seam, Brix):  AQL 0.65 or 1.0
+  Minor defects (cosmetic, label position):  AQL 2.5 or 4.0
+
+Normal inspection, Single sampling (ISO 2859-1 Table II-A):
+  Lot size 1,200–3,200 → Code Letter K
+  AQL 1.0 (Major) → n=125, Ac=3, Re=4
+  Meaning: sample 125 units; accept if ≤3 defects; reject if ≥4.
+
+Switching rules:
+  Tightened inspection: 2 lots rejected in last 5 → tighten (smaller AQL)
+  Reduced inspection: 10 consecutive lots accepted → reduce sample size
+        </div>
+        <div class="ex">
+          <strong>🍶 Incoming Inspection Example — PET Bottles from Supplier:</strong><br>
+          Delivery: 2,500 PET 500mL bottles. Critical defect = visible crack (AQL 0.065). Major defect = height OOT (AQL 1.0). Minor = cosmetic scratch (AQL 4.0).<br>
+          Per ISO 2859-1, Lot Size 2,500, General Level II → Code Letter K.<br>
+          Critical: n=125, Ac=0, Re=1 (zero tolerance for cracks)<br>
+          Major: n=125, Ac=3, Re=4<br>
+          Minor: n=200, Ac=14, Re=15<br>
+          Sample 125 bottles: 0 cracks (pass), 2 height defects (pass), 8 scratches (pass). Accept delivery. Log results in supplier scorecard.
+        </div>
+      </div>
+      <div>
+        <div class="ch-wrap">
+          <div class="ch-title">OC Curve — AQL 1.0, n=125 (Prob. Accept vs % Defective)</div>
+          <canvas id="ch-oc" height="280"></canvas>
+          <div style="font-size:11.5px;color:var(--txt3);margin-top:8px;">The OC curve shows the probability of accepting a lot as a function of the true % defective. At 1% defective (AQL), acceptance probability is ~95%. At 3% defective, probability drops sharply — this is the discrimination power of the plan.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">📋</span> Sample Size Formulas for QC Decisions</div>
+    <div class="g2">
+      <div>
+        <div class="fbox">
+<span class="cm">Sample size for estimating a mean (continuous data):</span>
+n = (Zα/2 × σ / E)²
+
+where E = maximum acceptable error from true mean
+      σ = estimated process std dev
+      Zα/2 = 1.96 for 95% confidence
+
+<span class="cm">Sample size for detecting a difference (2-sample t-test):</span>
+n per group = 2 × (Zα/2 + Zβ)² × σ² / δ²
+
+where δ = minimum detectable difference
+      σ = pooled std dev
+      Zβ = 0.842 for 80% power (β=0.20)
+           1.282 for 90% power
+
+<span class="cm">Sample size for proportion (p-chart baseline):</span>
+n = Z² × p(1−p) / E²
+Minimum: n such that np ≥ 5
+        </div>
+        <div class="co co-info"><span class="co-ico">💡</span><div><strong>Rule of thumb for quick calculations:</strong><br>
+        • Continuous data, estimating mean: n≥30 for basic statistics<br>
+        • Detecting a 1σ shift with 80% power: n≈17 per group<br>
+        • Detecting a 0.5σ shift with 80% power: n≈64 per group<br>
+        • Establishing control chart (Xbar-R): minimum 25 subgroups<br>
+        • Capability study: minimum 30 subgroups (preferably 25–30 × n=5 = 125–150 individual readings)</div></div>
+      </div>
+      <div>
+        <div class="ex">
+          <strong>🧪 Lab Sample Size — Detecting Brix Difference:</strong><br>
+          You want to detect if a new syrup supplier's product changes your Brix by 0.2°Bx or more. Historical process σ = 0.15°Bx. Target: 95% confidence, 80% power.<br>
+          n = 2 × (1.96 + 0.842)² × 0.15² / 0.2²<br>
+          n = 2 × (2.802)² × 0.0225 / 0.04<br>
+          n = 2 × 7.85 × 0.5625 = <strong>8.8 → round up to n = 9 per supplier.</strong><br><br>
+          Conclusion: Collect 9 batches from each supplier, run 2-sample t-test. Very feasible for a QC lab study.
+        </div>
+        <div class="ex" style="margin-top:10px;">
+          <strong>🍺 Audit Sample Size — Seam Inspection:</strong><br>
+          Incoming batch of 10,000 cans. You want to estimate true seam defect rate within ±0.5% with 95% confidence. Expected rate p̂ ≈ 2% from historical data.<br>
+          n = 1.96² × 0.02 × 0.98 / 0.005² = 3.84 × 0.0196 / 0.000025 = <strong>3,004 cans.</strong><br>
+          That's expensive — instead, use AQL sampling (n=200, Ac=10 at AQL 4.0) which gives a practical decision rule rather than a precise estimate.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">🔍</span> Sampling Strategies for Beverage Audits</div>
+    <table class="tbl">
+      <tr><th>Strategy</th><th>When to use</th><th>Beverage example</th><th>Risk</th></tr>
+      <tr><td>Simple Random</td><td>Homogeneous lots, no known stratification</td><td>Random selection of bottles from a pallet</td><td>May miss clustered defects</td></tr>
+      <tr><td>Systematic</td><td>Continuous production, time-based</td><td>Every 100th bottle from filling line</td><td>May miss shift-change issues if interval coincides</td></tr>
+      <tr><td>Stratified</td><td>Known subgroups with different risk levels</td><td>Sample proportionally from each filling head</td><td>Need to know strata in advance</td></tr>
+      <tr><td>Cluster</td><td>Large lots, full inspection of selected sub-lots</td><td>Randomly select 3 pallets, inspect all cans on those 3</td><td>High variability if clusters differ</td></tr>
+      <tr><td>Judgment / Risk-based</td><td>Audit of process steps with known failure modes</td><td>Audit most critical CCP steps more frequently</td><td>Bias if not well-justified by FMEA/risk data</td></tr>
+      <tr><td>Skip-lot</td><td>Excellent supplier history, AQL consistently <0.1%</td><td>Inspect only every 3rd delivery from validated supplier</td><td>Requires robust switching rules and history</td></tr>
+    </table>
+    <div class="co co-ok" style="margin-top:14px;"><span class="co-ico">✅</span><div><strong>Audit planning in beverage:</strong> Link your sampling frequency to your FMEA risk score. High-RPN process steps (e.g., underfill risk on aseptic line, seam integrity on cans) should be sampled more frequently and with tighter AQL. Low-risk steps (cosmetic labels) can use reduced or skip-lot inspection. Document the risk rationale in your control plan.</div></div>
+  </div>
+</section>
+
+<!-- TAB 9 — NON-PARAMETRIC TESTS ───────────────────────────────────
+     Rank-based tests for non-normal or ordinal data.
+     Contains:
+       · Parametric ↔ non-parametric equivalence table
+       · Mann-Whitney U: sensory scores for 2 label designs
+       · Kruskal-Wallis: foam stability across 4 hop varieties
+       · Transformation guide (log, sqrt, arcsine, Weibull)
+     ──────────────────────────────────────────────────────────────── -->
+<section class="tp" id="tp-nonparam">
+  <div class="stitle">Non-Parametric <span class="hl">Tests</span></div>
+  <div class="ssub">When data is not normally distributed — ranks-based tests that make no assumptions about the underlying distribution. Essential for sensory data, ordinal scores, and small samples.</div>
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">🧭</span> Non-Parametric Test Selection Guide</div>
+    <table class="tbl">
+      <tr><th>Parametric equivalent</th><th>Non-parametric alternative</th><th>Use when</th><th>Beverage example</th></tr>
+      <tr><td>1-sample t-test</td><td>Wilcoxon Signed-Rank Test</td><td>Non-normal data, compare median to target</td><td>Are sensory scores above 6/10 target for new recipe?</td></tr>
+      <tr><td>2-sample t-test (independent)</td><td>Mann-Whitney U Test</td><td>Non-normal data, comparing 2 groups</td><td>Do 2 sensory panels score the same product differently?</td></tr>
+      <tr><td>Paired t-test</td><td>Wilcoxon Signed-Rank Test</td><td>Paired non-normal data</td><td>Before/after recipe change: paired sensory scores per panellist</td></tr>
+      <tr><td>One-way ANOVA</td><td>Kruskal-Wallis Test</td><td>3+ groups, non-normal data</td><td>Compare consumer scores for 4 flavour variants</td></tr>
+      <tr><td>Two-way ANOVA</td><td>Friedman Test</td><td>Repeated measures, non-normal, ranked data</td><td>Panel of 10 tasters rate 4 products: each taster rates all 4</td></tr>
+      <tr><td>Pearson correlation</td><td>Spearman Rank Correlation</td><td>Ordinal data or outliers distort Pearson</td><td>Correlate consumer liking score with objective sweetness measure</td></tr>
+      <tr><td>Chi-square (for small samples)</td><td>Fisher's Exact Test</td><td>2×2 contingency, any expected cell &lt;5</td><td>2 suppliers, 2 defect outcomes, very small sample audit</td></tr>
+    </table>
+  </div>
+
+  <hr class="div">
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">1️⃣</span> Mann-Whitney U Test — The Non-Parametric 2-Sample Test</div>
+    <div class="g2">
+      <div>
+        <div class="fbox">
+H₀: The two populations have the same distribution (same median)
+H₁: The distributions differ (one tends to give larger values)
+
+Method (simplified):
+1. Combine all observations from both groups, rank them 1 to N
+2. For each group, sum the ranks: W₁ and W₂
+3. U₁ = n₁×n₂ + n₁(n₁+1)/2 − W₁
+   U₂ = n₁×n₂ + n₂(n₂+1)/2 − W₂
+4. U = min(U₁, U₂)
+5. Compare to critical U table (or use p-value from software)
+
+For large samples (n₁, n₂ > 8): normal approximation with Z-score.
+        </div>
+        <div class="ex">
+          <strong>🍷 Example — Consumer Liking Scores for 2 Wine Label Designs:</strong><br>
+          30 consumers each rate ONE label design (independent groups, n=15 per group). Liking score 1–10 (ordinal, NOT normal).<br>
+          Design A scores: 5,7,8,6,7,8,9,6,7,8,5,7,8,9,7 → Median = 7<br>
+          Design B scores: 4,5,6,5,7,5,6,4,6,5,7,5,6,4,5 → Median = 5<br>
+          Mann-Whitney U: U = 31, n₁=n₂=15. Critical U (α=0.05) = 72.<br>
+          U &lt; U_critical → <strong>Reject H₀. Design A is significantly preferred.</strong><br>
+          Note: A t-test would be inappropriate here because scores are ordinal (integer 1–10) and are not normally distributed.
+        </div>
+      </div>
+      <div>
+        <div class="ch-wrap">
+          <div class="ch-title">Box Plot — Consumer Scores by Label Design (Mann-Whitney)</div>
+          <canvas id="ch-mw" height="280"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <div class="sblock">
+    <div class="sblock-title"><span class="ico">2️⃣</span> Kruskal-Wallis — Non-Parametric ANOVA (3+ groups)</div>
+    <div class="g2">
+      <div>
+        <div class="fbox">
+H₀: All k groups come from the same distribution
+H₁: At least one group has a different distribution
+
+H = [12 / (N(N+1))] × Σ[Rⱼ² / nⱼ] − 3(N+1)
+
+N = total observations
+Rⱼ = sum of ranks in group j
+nⱼ = sample size of group j
+
+H ~ χ²(df = k−1) for large samples
+
+Post-hoc after significant KW:
+  Use Dunn's test with Bonferroni correction to identify which pairs differ.
+        </div>
+        <div class="ex">
+          <strong>🍺 Example — Foam Stability by 4 Hop Varieties:</strong><br>
+          A craft brewery tests 4 hop varieties (A, B, C, D) on foam stability score (1–10, rated by trained panel). n=8 batches per hop variety. Scores are ordinal ratings, not normally distributed.<br>
+          Kruskal-Wallis H = 14.2, df=3, p = 0.003 → At least one hop variety gives significantly different foam stability.<br>
+          Dunn's post-hoc: Variety C vs A (p=0.001) significant; Variety C vs D (p=0.004) significant; other comparisons not significant.<br>
+          <strong>Conclusion:</strong> Hop variety C gives consistently higher foam stability scores. Recommend switching to variety C for premium lines. Estimated additional material cost: +$0.04/litre, justified by premium quality positioning.
+        </div>
+      </div>
+      <div class="card" style="border-top:2px solid var(--acc);">
+        <div class="card-title" style="color:var(--acc);">When to Apply Transformations Instead</div>
+        <p style="font-size:13px;color:var(--txt2);line-height:1.7;">Sometimes you can transform skewed continuous data to normality and then use parametric tests — more powerful than non-parametric alternatives.</p>
+        <table class="tbl ref-small" style="margin-top:10px;">
+          <tr><th>Data pattern</th><th>Transformation</th><th>Beverage example</th></tr>
+          <tr><td>Right-skewed (positive values)</td><td>Log(Y) or ln(Y)</td><td>Microbial counts (CFU/mL) — log transform then t-test</td></tr>
+          <tr><td>Right-skewed, includes zeros</td><td>√Y or ln(Y+1)</td><td>Yeast cell counts per ml after dilution</td></tr>
+          <tr><td>Proportion data (0–1)</td><td>Arcsin(√p)</td><td>Proportion of out-of-spec batches</td></tr>
+          <tr><td>Counts (Poisson)</td><td>√Y</td><td>Number of glass fragments detected per 1000 bottles</td></tr>
+          <tr><td>Survival / time-to-failure</td><td>Weibull or Cox model</td><td>Time to shelf life failure, packaging seal failure</td></tr>
+        </table>
+        <div class="ex" style="margin-top:10px;"><strong>🧪 Micro Lab:</strong> Aerobic plate counts (APC) are right-skewed with huge range (10–10,000 CFU/mL). Log₁₀ transform → approximately normal. Now use standard t-test or ANOVA on the log values. Report results back on original scale (antilog of the mean log = geometric mean). This is standard practice in microbiology — "2 log reduction" = 99% reduction in count.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     ABOUT MODAL — author bio and LinkedIn link
+     Visibility controlled by the CSS .show class.
+     ══════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <button class="modal-x" id="modal-x">✕</button>
+    <h2>Matteo <span>Ferrini</span></h2>
+    <div class="modal-role">Beverage Industry</div>
+    <p>This reference guide was built for Six Sigma Black Belt practitioners working in production, QC labs, and auditing in the beverage industry.</p>
+    <p><p>
+        Released under the 
+        <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" style="color: #ec071a; text-decoration: underline;">
+            GNU GPL v3.0 License
+        </a>
+    </p></p>
+    <p><strong>Disclaimer:</strong> The author is not responsible for any consequences arising from the use of this material.</p>
+    <a class="modal-li" href="https://www.linkedin.com/in/matteo-ferrini-beverage/?originalSubdomain=nl" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      Connect on LinkedIn
+    </a>
+  </div>
+</div>
+
+
+<!-- App logic -->
+<script src="js/main.js"></script>
+</body>
+</html>

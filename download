@@ -1,0 +1,28 @@
+# ── OS FILES ──────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+*~
+
+# ── EDITORS & IDEs ────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── BUILD & TEMP ──────────────────────────────────────────────────────────────
+*.log
+*.tmp
+*.bak
+*.orig
+
+# ── PYTHON (build/export scripts) ─────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# ── NODE (if added in future) ─────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+package-lock.json
